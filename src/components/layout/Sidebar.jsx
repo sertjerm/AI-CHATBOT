@@ -1,136 +1,218 @@
 import React from 'react';
-import { Layout, Card, Button, Typography, Statistic, Space } from 'antd';
+import {
+  Layout,
+  Card,
+  Button,
+  Typography,
+  Statistic,
+  Space,
+  Tag,
+  Divider,
+} from 'antd';
 import {
   MessageOutlined,
   BulbOutlined,
   InfoCircleOutlined,
   ExperimentOutlined,
+  StarOutlined,
+  RocketOutlined,
+  FireOutlined,
+  RobotOutlined,
 } from '@ant-design/icons';
 import { useChatStore } from '../../stores/chatStore';
 import PropTypes from 'prop-types';
 
 const { Sider } = Layout;
-const { Paragraph } = Typography;
+const { Paragraph, Text, Title } = Typography;
 
 const quickPrompts = [
-  'AI ยี่ห้อไหนเก่งเรื่อง flowchart',
-  'วิเคราะห์ข้อดีข้อเสียของ ChatGPT vs Claude',
-  'อธิบายการทำงานของ Neural Network แบบง่ายๆ',
-  'แนะนำเทคนิคการเขียน prompt ที่ดี',
-  'ความแตกต่างระหว่าง Machine Learning กับ Deep Learning',
+  {
+    text: 'AI ยี่ห้อไหนเก่งเรื่อง flowchart',
+    icon: <RocketOutlined />,
+    category: 'เทคนิค',
+  },
+  {
+    text: 'วิเคราะห์ข้อดีข้อเสียของ ChatGPT vs Claude',
+    icon: <ExperimentOutlined />,
+    category: 'เปรียบเทียบ',
+  },
+  {
+    text: 'อธิบายการทำงานของ Neural Network แบบง่ายๆ',
+    icon: <BulbOutlined />,
+    category: 'การเรียนรู้',
+  },
+  {
+    text: 'แนะนำเทคนิคการเขียน prompt ที่ดี',
+    icon: <StarOutlined />,
+    category: 'เทคนิค',
+  },
+  {
+    text: 'ความแตกต่างระหว่าง Machine Learning กับ Deep Learning',
+    icon: <FireOutlined />,
+    category: 'การเรียนรู้',
+  },
 ];
 
 export const Sidebar = ({ collapsed, onQuickPrompt }) => {
   const { messages } = useChatStore();
+
   if (collapsed) return null;
 
   return (
     <Sider
-      width={340}
-      className="hidden lg:flex flex-col bg-gradient-to-br from-indigo-400/80 via-purple-400/60 to-blue-300/80 border-none shadow-2xl backdrop-blur-xl !rounded-2xl m-4 h-[92vh]"
+      width={360}
+      className="hidden lg:flex flex-col sidebar-morphism m-4 h-[calc(100vh-2rem)] rounded-3xl shadow-glass border-0"
       collapsed={false}
       style={{
-        minWidth: 320,
-        maxWidth: 360,
-        border: 'none',
-        boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.18)',
+        minWidth: 340,
+        maxWidth: 380,
       }}
     >
       <div className="flex-1 flex flex-col gap-6 p-6 overflow-y-auto custom-scrollbar">
-        {/* Chat History Section */}
+        {/* Welcome Section */}
+        <div className="text-center py-4">
+          <div className="w-16 h-16 bg-white/20 rounded-3xl flex items-center justify-center mx-auto mb-4 backdrop-blur-md border border-white/30">
+            <RobotOutlined className="text-3xl text-white" />
+          </div>
+          <Title level={4} className="!mb-2 text-white font-bold">
+            AI Assistant
+          </Title>
+          <Text className="text-white/80 text-sm">
+            พร้อมช่วยเหลือคุณตลอด 24 ชั่วโมง
+          </Text>
+        </div>
+
+        <Divider className="border-white/20 my-4" />
+
+        {/* Stats Section */}
         <Card
           size="small"
-          className="rounded-xl shadow-md border-0 bg-white/80 backdrop-blur-md"
-          title={
-            <Space>
-              <MessageOutlined className="text-indigo-500" />
-              <span className="font-semibold text-indigo-700">
-                การสนทนาล่าสุด
-              </span>
-            </Space>
-          }
+          className="glass-card border-white/30 bg-white/90"
+          bodyStyle={{ padding: '16px' }}
         >
-          <div className="space-y-2">
-            <div className="p-3 bg-gradient-to-r from-blue-100/80 to-indigo-100/80 rounded-xl border border-blue-200 flex flex-col items-start shadow-sm">
-              <div className="font-medium text-sm text-indigo-700">
-                การสนทนาปัจจุบัน
-              </div>
-              <div className="text-xs text-gray-500">ตอนนี้</div>
-            </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Statistic
+              title={
+                <span className="text-surface-600 text-xs font-semibold">
+                  ข้อความทั้งหมด
+                </span>
+              }
+              value={messages.length}
+              valueStyle={{
+                color: '#667eea',
+                fontSize: '1.5rem',
+                fontWeight: 'bold',
+              }}
+              suffix={<MessageOutlined className="text-primary-500" />}
+            />
+            <Statistic
+              title={
+                <span className="text-surface-600 text-xs font-semibold">
+                  การสนทนา
+                </span>
+              }
+              value="1"
+              valueStyle={{
+                color: '#f093fb',
+                fontSize: '1.5rem',
+                fontWeight: 'bold',
+              }}
+              suffix={<StarOutlined className="text-pink-500" />}
+            />
           </div>
         </Card>
 
         {/* Quick Prompts Section */}
         <Card
           size="small"
-          className="rounded-xl shadow-md border-0 bg-white/80 backdrop-blur-md"
+          className="glass-card border-white/30 bg-white/90"
           title={
-            <Space>
-              <BulbOutlined className="text-yellow-500" />
-              <span className="font-semibold text-yellow-700">
-                คำถามยอดนิยม
-              </span>
+            <Space className="w-full justify-between">
+              <Space>
+                <BulbOutlined className="text-primary-500" />
+                <span className="font-bold text-surface-700">คำถามแนะนำ</span>
+              </Space>
+              <Tag color="processing" className="rounded-full px-2">
+                ใหม่
+              </Tag>
             </Space>
           }
+          bodyStyle={{ padding: '16px' }}
         >
-          <div className="space-y-2">
+          <div className="space-y-3">
             {quickPrompts.map((prompt, index) => (
               <Button
                 key={index}
-                type="default"
-                size="middle"
-                onClick={() => onQuickPrompt(prompt)}
-                className="w-full text-left h-auto whitespace-normal p-3 rounded-xl font-medium bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 text-indigo-700 shadow-sm border-0 transition-all duration-200"
-                style={{ boxShadow: '0 2px 8px 0 rgba(102,126,234,0.08)' }}
+                onClick={() => onQuickPrompt(prompt.text)}
+                className="quick-prompt-btn hover:scale-[1.02] active:scale-[0.98] group"
+                block
               >
-                <BulbOutlined className="mr-2 text-yellow-400" />
-                {prompt}
+                <div className="flex items-start gap-3 text-left">
+                  <div className="text-lg mt-0.5 group-hover:scale-110 transition-transform">
+                    {prompt.icon}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium line-clamp-2 mb-1">
+                      {prompt.text}
+                    </div>
+                    <Tag
+                      size="small"
+                      className="rounded-full text-xs"
+                      color={prompt.category === 'เทคนิค' ? 'blue' : 'purple'}
+                    >
+                      {prompt.category}
+                    </Tag>
+                  </div>
+                </div>
               </Button>
             ))}
           </div>
         </Card>
 
-        {/* About Section */}
+        {/* Tips Section */}
         <Card
           size="small"
-          className="rounded-xl shadow-md border-0 bg-white/80 backdrop-blur-md"
+          className="glass-card border-white/30 bg-white/90"
           title={
             <Space>
               <InfoCircleOutlined className="text-blue-500" />
-              <span className="font-semibold text-blue-700">เกี่ยวกับ AI</span>
+              <span className="font-bold text-surface-700">
+                เคล็ดลับการใช้งาน
+              </span>
             </Space>
           }
+          bodyStyle={{ padding: '16px' }}
         >
-          <Paragraph className="text-base text-gray-700 mb-4 font-medium">
-            DeepSeek R1 Turbo{' '}
-            <span className="font-bold text-indigo-600">AI</span>{' '}
-            ที่มีความสามารถในการคิดและวิเคราะห์อย่างลึกซึ้ง
-            <br />
-            พร้อมตอบคำถามที่ซับซ้อนได้อย่างแม่นยำ
-          </Paragraph>
-          <div className="grid grid-cols-2 gap-4">
-            <Statistic
-              title={<span className="text-xs text-gray-500">ข้อความ</span>}
-              value={messages.length}
-              prefix={<ExperimentOutlined className="text-indigo-400" />}
-              valueStyle={{
-                fontSize: '18px',
-                color: '#6366f1',
-                fontWeight: 600,
-              }}
-            />
-            <Statistic
-              title={<span className="text-xs text-gray-500">ความแม่นยำ</span>}
-              value={99}
-              suffix="%"
-              valueStyle={{
-                fontSize: '18px',
-                color: '#059669',
-                fontWeight: 600,
-              }}
-            />
+          <div className="space-y-3">
+            <div className="flex items-start gap-3">
+              <div className="w-2 h-2 bg-primary-500 rounded-full mt-2 flex-shrink-0" />
+              <Paragraph className="text-surface-600 text-sm !mb-0">
+                <strong>Enter</strong> เพื่อส่งข้อความ
+              </Paragraph>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0" />
+              <Paragraph className="text-surface-600 text-sm !mb-0">
+                <strong>Shift+Enter</strong> เพื่อขึ้นบรรทัดใหม่
+              </Paragraph>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="w-2 h-2 bg-pink-500 rounded-full mt-2 flex-shrink-0" />
+              <Paragraph className="text-surface-600 text-sm !mb-0">
+                ใช้ประโยคที่ชัดเจนเพื่อผลลัพธ์ที่ดีที่สุด
+              </Paragraph>
+            </div>
           </div>
         </Card>
+
+        {/* Version Info */}
+        <div className="mt-auto pt-4">
+          <div className="text-center">
+            <Text className="text-white/60 text-xs">
+              KUSCC AI Chatbot v1.0.0
+            </Text>
+          </div>
+        </div>
       </div>
     </Sider>
   );
