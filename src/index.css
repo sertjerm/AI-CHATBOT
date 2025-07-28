@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles */
+@layer components {
+  .chat-gradient {
+    @apply bg-gradient-to-br from-gradient-start to-gradient-end;
+  }
+  
+  .message-bubble {
+    @apply rounded-2xl px-4 py-3 max-w-xs md:max-w-md lg:max-w-lg;
+  }
+  
+  .typing-dot {
+    @apply w-2 h-2 bg-gray-400 rounded-full animate-bounce;
+  }
+  
+  .glass-effect {
+    @apply bg-white/10 backdrop-blur-md border border-white/20;
+  }
+}
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #5a67d8, #6b46c1);
+}
+
+/* Ant Design customizations */
+.ant-layout {
+  background: transparent !important;
+}
+
+.ant-input {
+  @apply border-gray-300 focus:border-primary-500;
+}
+
+.ant-btn-primary {
+  @apply bg-primary-500 border-primary-500 hover:bg-primary-600 hover:border-primary-600;
+}
