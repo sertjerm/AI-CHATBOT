@@ -1,21 +1,29 @@
 import React, { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useChatStore } from '../stores/chatStore';
+import { useChatStore } from '../../stores/chatStore';
 import { Message } from './Message';
+import { FAQ } from '../../utils/constants';
 
-const samplePrompts = [
-  'AI ยี่ห้อไหนเก่งเรื่อง flowchart',
-  'วิเคราะห์ข้อดีข้อเสียของ ChatGPT vs Claude',
-  'อธิบายการทำงานของ Neural Network แบบง่ายๆ',
-  'แนะนำเทคนิคการเขียน prompt ที่ดี'
-];
+// ดึงตัวอย่างคำถามจาก title/submenu แรกของแต่ละ intent
+const samplePrompts = FAQ.flatMap((faq) =>
+  Array.isArray(faq.submenus) && faq.submenus.length > 0
+    ? faq.submenus[0].title
+      ? [faq.submenus[0].title]
+      : [faq.submenus[0]]
+    : []
+);
 
 const WelcomeMessage = () => (
   <div className="welcome-message">
-    <i className="fas fa-comments" style={{fontSize: '2rem', marginBottom: '10px', display: 'block'}}></i>
-    สวัสดีครับ! ฉันคือ AI Assistant ที่ใช้ DeepSeek R1 Turbo<br/>
-    พร้อมตอบคำถามและช่วยเหลือคุณในการวิเคราะห์และคิดอย่างลึกซึ้ง<br/>
-    <small style={{color: '#94a3b8', marginTop: '10px', display: 'block'}}>
+    <i
+      className="fas fa-comments"
+      style={{ fontSize: '2rem', marginBottom: '10px', display: 'block' }}
+    ></i>
+    สวัสดีครับ! ฉันคือ AI Assistant ที่ใช้ DeepSeek R1 Turbo
+    <br />
+    พร้อมตอบคำถามและช่วยเหลือคุณในการวิเคราะห์และคิดอย่างลึกซึ้ง
+    <br />
+    <small style={{ color: '#94a3b8', marginTop: '10px', display: 'block' }}>
       พิมพ์ข้อความเพื่อเริ่มการสนทนา
     </small>
   </div>
@@ -60,7 +68,8 @@ export const ChatArea = ({ onPromptClick }) => {
   // Auto scroll to bottom
   useEffect(() => {
     if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+      messagesContainerRef.current.scrollTop =
+        messagesContainerRef.current.scrollHeight;
     }
   }, [messages, isTyping]);
 
@@ -69,15 +78,15 @@ export const ChatArea = ({ onPromptClick }) => {
       <div className="chat-messages-inner">
         {/* Welcome message when no messages */}
         {messages.length === 0 && showSamplePrompts && <WelcomeMessage />}
-        
+
         {/* Messages */}
         {messages.map((message) => (
           <Message key={message.id} message={message} />
         ))}
-        
+
         {/* Typing indicator */}
         {isTyping && <TypingIndicator />}
-        
+
         {/* Sample prompts when no messages */}
         {messages.length === 0 && showSamplePrompts && (
           <SamplePrompts onPromptClick={onPromptClick} />

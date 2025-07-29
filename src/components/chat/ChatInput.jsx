@@ -1,12 +1,13 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useAppStore } from '../stores/appStore';
-import { useChatStore } from '../stores/chatStore';
+import { useAppStore } from '../../stores/appStore';
+import { useChatStore } from '../../stores/chatStore';
 
 export const ChatInput = ({ onSendMessage }) => {
   const { inputValue, setInputValue } = useAppStore();
   const { isLoading, hideSamplePrompts } = useChatStore();
   const inputRef = useRef(null);
+  const [memberNo, setMemberNo] = useState('012938'); // Default member number
 
   // Focus input on mount and when loading changes
   useEffect(() => {
@@ -19,7 +20,7 @@ export const ChatInput = ({ onSendMessage }) => {
   const handleInputChange = (e) => {
     const value = e.target.value;
     setInputValue(value);
-    
+
     // Auto-resize textarea
     const textarea = e.target;
     textarea.style.height = 'auto';
@@ -37,9 +38,9 @@ export const ChatInput = ({ onSendMessage }) => {
   // Handle send
   const handleSend = () => {
     const message = inputValue.trim();
-    if (message && !isLoading) {
+    if (message && memberNo && !isLoading) {
       hideSamplePrompts(); // Hide sample prompts when user starts typing
-      onSendMessage(message);
+      onSendMessage({ message, memberNo }); // ส่งเป็น object
     }
   };
 
@@ -47,21 +48,31 @@ export const ChatInput = ({ onSendMessage }) => {
     <div className="chat-input">
       <div className="input-container-wrapper">
         <div className="input-container">
-          <textarea 
+          {/* เพิ่มช่องกรอก member_no */}
+          <input
+            type="text"
+            className="member-no-input"
+            placeholder="กรอกหมายเลขสมาชิก"
+            value={memberNo}
+            onChange={(e) => setMemberNo(e.target.value)}
+            disabled={isLoading}
+            style={{ marginRight: 8, width: 140 }}
+          />
+          <textarea
             ref={inputRef}
-            className="input-field" 
-            placeholder="พิมพ์ข้อความของคุณที่นี่..." 
+            className="input-field"
+            placeholder="พิมพ์ข้อความของคุณที่นี่..."
             rows="1"
             value={inputValue}
             onChange={handleInputChange}
             onKeyDown={handleKeyPress}
             disabled={isLoading}
           />
-          <button 
-            type="button" 
+          <button
+            type="button"
             className="send-button"
             onClick={handleSend}
-            disabled={!inputValue.trim() || isLoading}
+            disabled={!inputValue.trim() || !memberNo || isLoading}
           >
             {isLoading ? (
               <i className="fas fa-spinner fa-spin"></i>

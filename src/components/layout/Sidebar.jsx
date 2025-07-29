@@ -2,14 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useAppStore } from '../../stores/appStore';
 import { useChatStore } from '../../stores/chatStore';
+import { FAQ } from '../../utils/constants';
 
-const sidebarPrompts = [
-  'AI ยี่ห้อไหนเก่งเรื่อง flowchart',
-  'วิเคราะห์ข้อดีข้อเสียของ ChatGPT vs Claude',
-  'อธิบายการทำงานของ Neural Network แบบง่ายๆ',
-  'แนะนำเทคนิคการเขียน prompt ที่ดี',
-  'ความแตกต่างระหว่าง Machine Learning กับ Deep Learning'
-];
+// ดึง title/submenu แรกของแต่ละ intent จาก FAQ
+const sidebarPrompts = FAQ.flatMap((faq) =>
+  Array.isArray(faq.submenus) && faq.submenus.length > 0
+    ? faq.submenus[0].title
+      ? [faq.submenus[0].title]
+      : [faq.submenus[0]]
+    : []
+);
 
 export const Sidebar = ({ onPromptClick }) => {
   const { sidebarVisible } = useAppStore();
@@ -28,14 +30,14 @@ export const Sidebar = ({ onPromptClick }) => {
           </div>
         </div>
       </div>
-      
+
       <div className="sidebar-section">
         <h4>คำถามยอดนิยม</h4>
         <div className="popular-questions">
           {sidebarPrompts.map((prompt, index) => (
-            <button 
+            <button
               key={index}
-              className="sidebar-quick-btn" 
+              className="sidebar-quick-btn"
               onClick={() => onPromptClick(prompt)}
             >
               {prompt}
@@ -48,7 +50,8 @@ export const Sidebar = ({ onPromptClick }) => {
         <h4>เกี่ยวกับ AI</h4>
         <div className="about-info">
           <p>
-            DeepSeek R1 Turbo - AI ที่มีความสามารถในการคิดและวิเคราะห์อย่างลึกซึ้ง 
+            DeepSeek R1 Turbo - AI
+            ที่มีความสามารถในการคิดและวิเคราะห์อย่างลึกซึ้ง
             พร้อมตอบคำถามที่ซับซ้อนได้อย่างแม่นยำ
           </p>
           <div className="stats">

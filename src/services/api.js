@@ -34,41 +34,42 @@ apiClient.interceptors.response.use(
 );
 
 export const chatAPI = {
-  sendMessage: async (message) => {
+  sendMessage: async (message, memberNo) => {
     try {
       const data = JSON.stringify({
         input: message,
+        member_no: memberNo,
       });
 
       const config = {
         method: 'post',
         maxBodyLength: Infinity,
         url: API_URL,
-        headers: { 
-          'Content-Type': 'application/json'
+        headers: {
+          'Content-Type': 'application/json',
         },
-        data: data
+        data: data,
       };
 
       const response = await apiClient.request(config);
-      
+
       // Extract AI response from the API response format
       if (response.data && response.data.choices && response.data.choices[0]) {
         return {
           content: response.data.choices[0].message.content,
           usage: response.data.usage,
           id: response.data.id,
-          model: response.data.model
+          model: response.data.model,
         };
       } else {
         throw new Error('Invalid response format from API');
       }
-      
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        const errorMessage = error.response?.data?.error || 
-                            error.response?.data?.message || 
-                            'Network error occurred';
+        const errorMessage =
+          error.response?.data?.error ||
+          error.response?.data?.message ||
+          'Network error occurred';
         throw new Error(errorMessage);
       }
       throw new Error('An unexpected error occurred');
