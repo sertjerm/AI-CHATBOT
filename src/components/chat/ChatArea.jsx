@@ -1,66 +1,96 @@
-import React, { useEffect, useRef } from 'react';
-import { Empty } from 'antd';
-import { useChatStore } from '../../stores/chatStore';
+import React, { useRef, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import { useChatStore } from '../stores/chatStore';
 import { Message } from './Message';
-import { TypingIndicator } from '../common/TypingIndicator';
-import { useChat } from '../../hooks/useChat';
 
-export const ChatArea = () => {
-  const { messages } = useChatStore();
-  const { isTyping } = useChat();
-  const messagesEndRef = useRef(null);
+const samplePrompts = [
+  'AI ยี่ห้อไหนเก่งเรื่อง flowchart',
+  'วิเคราะห์ข้อดีข้อเสียของ ChatGPT vs Claude',
+  'อธิบายการทำงานของ Neural Network แบบง่ายๆ',
+  'แนะนำเทคนิคการเขียน prompt ที่ดี'
+];
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+const WelcomeMessage = () => (
+  <div className="welcome-message">
+    <i className="fas fa-comments" style={{fontSize: '2rem', marginBottom: '10px', display: 'block'}}></i>
+    สวัสดีครับ! ฉันคือ AI Assistant ที่ใช้ DeepSeek R1 Turbo<br/>
+    พร้อมตอบคำถามและช่วยเหลือคุณในการวิเคราะห์และคิดอย่างลึกซึ้ง<br/>
+    <small style={{color: '#94a3b8', marginTop: '10px', display: 'block'}}>
+      พิมพ์ข้อความเพื่อเริ่มการสนทนา
+    </small>
+  </div>
+);
 
+const SamplePrompts = ({ onPromptClick }) => (
+  <div className="sample-prompts">
+    <h4>ตัวอย่างคำถาม:</h4>
+    <div className="sample-prompts-grid">
+      {samplePrompts.map((prompt, index) => (
+        <button
+          key={index}
+          className="sample-prompt-btn"
+          onClick={() => onPromptClick(prompt)}
+        >
+          {prompt}
+        </button>
+      ))}
+    </div>
+  </div>
+);
+
+const TypingIndicator = () => (
+  <div className="message ai">
+    <div className="avatar ai">
+      <i className="fas fa-robot"></i>
+    </div>
+    <div className="typing-indicator">
+      <div className="typing-dots">
+        <div className="typing-dot"></div>
+        <div className="typing-dot"></div>
+        <div className="typing-dot"></div>
+      </div>
+    </div>
+  </div>
+);
+
+export const ChatArea = ({ onPromptClick }) => {
+  const { messages, showSamplePrompts, isTyping } = useChatStore();
+  const messagesContainerRef = useRef(null);
+
+  // Auto scroll to bottom
   useEffect(() => {
-    scrollToBottom();
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
   }, [messages, isTyping]);
 
-  if (messages.length === 0) {
-    return (
-      <div className="flex-1 flex items-center justify-center">
-        <Empty
-          description={
-            <div className="text-center">
-              <h3 className="text-lg font-semibold text-gray-700 mb-2">
-                สวัสดีครับ! ✨
-              </h3>
-              <p className="text-gray-500">
-                ฉันคือ AI Assistant ที่ใช้ DeepSeek R1 Turbo
-                <br />
-                พร้อมตอบคำถามและช่วยเหลือคุณในการวิเคราะห์อย่างลึกซึ้ง
-              </p>
-              <p className="text-sm text-gray-400 mt-2">
-                พิมพ์ข้อความเพื่อเริ่มการสนทนา
-              </p>
-            </div>
-          }
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-        />
-      </div>
-    );
-  }
-
   return (
-    <div className="flex-1 overflow-y-auto custom-scrollbar px-4 py-6">
-      <div className="max-w-4xl mx-auto">
+    <div className="chat-messages" ref={messagesContainerRef}>
+      <div className="chat-messages-inner">
+        {/* Welcome message when no messages */}
+        {messages.length === 0 && showSamplePrompts && <WelcomeMessage />}
+        
+        {/* Messages */}
         {messages.map((message) => (
           <Message key={message.id} message={message} />
         ))}
-
-        {isTyping && (
-          <div className="flex gap-3 mb-4">
-            <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
-              <span className="text-white text-xs">AI</span>
-            </div>
-            <TypingIndicator />
-          </div>
+        
+        {/* Typing indicator */}
+        {isTyping && <TypingIndicator />}
+        
+        {/* Sample prompts when no messages */}
+        {messages.length === 0 && showSamplePrompts && (
+          <SamplePrompts onPromptClick={onPromptClick} />
         )}
-
-        <div ref={messagesEndRef} />
       </div>
     </div>
   );
+};
+
+SamplePrompts.propTypes = {
+  onPromptClick: PropTypes.func.isRequired,
+};
+
+ChatArea.propTypes = {
+  onPromptClick: PropTypes.func.isRequired,
 };
